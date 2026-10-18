@@ -186,25 +186,44 @@ function life(c: Canary, big = false) {
   </div>`
 }
 
-function card(c: Canary) {
+const catLabel = (c: string) => ({ vpn: "VPN", email: "Email", cloud: "Cloud", messaging: "Messaging" })[c] ?? c
+
+function tags(c: Canary) {
+  const out: string[] = []
+  if (c.laterClaim) out.push(`<span class="tag-o tag-bad" title="Another wallet published this name first">${icon("alert")}Possible imposter</span>`)
+  else if (c.nameClaimedBy.length) out.push(`<span class="tag-o tag-warn" title="Trust the wallet, not the name">${icon("alert")}Name shared</span>`)
+  if (c.restarted) out.push(`<span class="tag-o tag-warn" title="The live pulse is younger than the promise">${icon("restart")}Restarted</span>`)
+  if (c.spoofedPulses) out.push(`<span class="tag-o tag-ok" title="Pulses from other wallets that point here">${icon("shield")}${c.spoofedPulses} fake renewal${c.spoofedPulses > 1 ? "s" : ""} blocked</span>`)
+  return out.join("")
+}
+
+function row(c: Canary) {
+  const pct = c.status === "dead" ? 0 : Math.max(0, Math.min(100, (c.secondsLeft / c.periodSec) * 100))
+  const timer =
+    c.status === "dead"
+      ? `<span class="r-time r-dead">No renewal</span><span class="r-bar"><span class="r-fill r-fill-dead" style="width:100%"></span></span>`
+      : `<span class="r-time mono" data-left="${c.secondsLeft}">${fmtDuration(c.secondsLeft)}</span><span class="r-bar"><span class="r-fill r-fill-${c.status}" style="width:${pct}%" data-bar="${c.secondsLeft}" data-period="${c.periodSec}"></span></span>`
   return `
-  <article class="card card-${c.status}">
-    <header class="card-head">
-      ${avatar(c)}
-      <div class="card-title">
-        <h3><a href="#/c/${c.promiseKey}">${esc(c.org)}</a></h3>
-        <span class="sub">${esc(c.category)} · every ${fmtPeriod(c.periodSec)}</span>
-      </div>
-      ${chip(c)}
-    </header>
-    <p class="statement">${esc(c.statement)}</p>
-    ${life(c)}
-    ${flags(c)}
-    <footer class="card-foot">
-      <span class="muted">Signed by ${addrLink(c.creator)}</span>
-      <a class="link-arrow" href="#/c/${c.promiseKey}">Verify ${icon("arrow")}</a>
-    </footer>
-  </article>`
+  <a class="r r-${c.status}" href="#/c/${c.promiseKey}">
+    <span class="r-org">
+      ${avatar(c, "avatar-sm")}
+      <span class="r-id"><b>${esc(c.org)}</b><span class="r-sub">${esc(catLabel(c.category))}${tags(c) ? `<span class="r-tags">${tags(c)}</span>` : ""}</span></span>
+    </span>
+    <span class="r-status"><i class="dot dot-${c.status}"></i>${STATUS[c.status].label}</span>
+    <span class="r-renew">${timer}</span>
+    <span class="r-period">${fmtPeriod(c.periodSec)}</span>
+    <span class="r-signer mono">${short(c.creator)}</span>
+    <span class="r-go">${icon("arrow")}</span>
+  </a>`
+}
+
+function boardList(list: Canary[]) {
+  return `<div class="list">
+    <div class="r r-head" aria-hidden="true">
+      <span>Organization</span><span>Status</span><span>Next renewal</span><span>Renews every</span><span>Signed by</span><span></span>
+    </div>
+    ${list.map(row).join("")}
+  </div>`
 }
 
 function codeBlock(label: string, code: string) {
@@ -265,9 +284,9 @@ function boardBody() {
     ${state.error ? `<p class="notice notice-error">${esc(state.error)}</p>` : ""}
     ${
       state.loading
-        ? `<div class="grid">${'<div class="card skeleton"></div>'.repeat(3)}</div>`
+        ? `<div class="list">${'<div class="r r-skel"></div>'.repeat(4)}</div>`
         : state.canaries.length
-          ? `<div class="grid">${state.canaries.map(card).join("")}</div>`
+          ? boardList(state.canaries)
           : state.error
             ? `<div class="empty">${icon("alert")}<h3>Couldn't read the board right now</h3><p>Every canary is still on Arkiv. Try again shortly.</p></div>`
             : `<div class="empty">${icon("layers")}<h3>No canaries${history ? " at this block" : " yet"}</h3><p>Be the first company to publish one.</p><a class="btn btn-primary btn-sm" href="#/publish">Publish a canary</a></div>`
