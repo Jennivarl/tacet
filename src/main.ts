@@ -48,7 +48,11 @@ const ext = (href: string, label: string, cls = "") =>
   `<a class="${cls}" href="${href}" target="_blank" rel="noopener">${label}</a>`
 const addrLink = (a: string) => ext(`${EXPLORER}/address/${a}`, short(a), "mono link")
 const txLink = (h: string) => ext(`${EXPLORER}/tx/${h}`, short(h), "mono link")
-const errText = (e: unknown) => (e instanceof Error ? e.message.split("\n")[0] : String(e))
+// Wallets reject with plain { code, message } objects rather than Errors.
+const errText = (e: unknown) => {
+  const m = e instanceof Error ? e.message : (e as { message?: unknown } | null)?.message
+  return typeof m === "string" ? m.split("\n")[0] : String(e)
+}
 
 const PATHS: Record<string, string> = {
   shield: '<path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
@@ -616,10 +620,17 @@ async function connect() {
   try {
     await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] })
   } catch {
-    await eth.request({
-      method: "wallet_addEthereumChain",
-      params: [{ chainId, chainName: "Arkiv Tiramisu", nativeCurrency: tiramisu.nativeCurrency, rpcUrls: [RPC], blockExplorerUrls: [EXPLORER] }],
-    })
+    try {
+      await eth.request({
+        method: "wallet_addEthereumChain",
+        params: [{ chainId, chainName: "Arkiv Tiramisu", nativeCurrency: tiramisu.nativeCurrency, rpcUrls: [RPC], blockExplorerUrls: [EXPLORER] }],
+      })
+      await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] })
+    } catch (e) {
+      throw new Error(
+        `Your wallet could not switch to Arkiv Tiramisu (${errText(e)}). Add it manually: RPC ${RPC}, chain ID ${tiramisu.id}, symbol GLM.`,
+      )
+    }
   }
   account = addr
   wallet = createWalletClient({ chain: tiramisu, transport: custom(eth), account: addr })
