@@ -156,7 +156,30 @@ function chip(c: Canary) {
   return `<span class="chip chip-${c.status}"><i class="dot"></i>${STATUS[c.status].label}</span>`
 }
 
+// Logo marks for the fictional demo organizations. Anything else gets a lettered tile.
+const LOGOS: Record<string, { bg: string; svg: string }> = {
+  "fennec-vpn": {
+    bg: "#e2702b",
+    svg: '<path d="M6 7l6.5 6L16 11l3.5 2L26 7l-2 11-8 7-8-7z" fill="#fff"/><path d="M12.5 13L16 11l3.5 2-1.5 6-2 1.5L14 19z" fill="#fbd9c2"/><circle cx="13" cy="16.5" r="1.2" fill="#3b1d0c"/><circle cx="19" cy="16.5" r="1.2" fill="#3b1d0c"/><path d="M15 20.5h2l-1 1.3z" fill="#3b1d0c"/>',
+  },
+  "owlpost-mail": {
+    bg: "#3d3a8c",
+    svg: '<path d="M8 9l4 3h8l4-3v10a8 8 0 0 1-16 0z" fill="#c9c6ff"/><circle cx="12.5" cy="16" r="3.4" fill="#fff"/><circle cx="19.5" cy="16" r="3.4" fill="#fff"/><circle cx="12.8" cy="16.2" r="1.6" fill="#1d1b4a"/><circle cx="19.2" cy="16.2" r="1.6" fill="#1d1b4a"/><path d="M15 19.5h2l-1 2z" fill="#f2b705"/>',
+  },
+  "harbor-cloud": {
+    bg: "#0f6e78",
+    svg: '<path d="M10.5 15.5a4 4 0 0 1 7.6-1.7A3.3 3.3 0 1 1 21.5 19H11a3 3 0 0 1-.5-3.5z" fill="#fff"/><path d="M6 23c2.5 0 2.5-1.6 5-1.6s2.5 1.6 5 1.6 2.5-1.6 5-1.6 2.5 1.6 5 1.6" stroke="#9be3e8" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  },
+  "kite-chat": {
+    bg: "#d94b6a",
+    svg: '<path d="M16 5l7 8-7 9-7-9z" fill="#fff"/><path d="M16 5v17M9 13h14" stroke="#d94b6a" stroke-width="1.2"/><path d="M16 22c-1 2 1.5 2.5.5 4.5" stroke="#ffd1dc" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+  },
+}
+
 function avatar(c: Canary, size = "") {
+  const logo = LOGOS[c.slug]
+  if (logo)
+    return `<span class="avatar logo ${size}" style="background:${logo.bg}" aria-hidden="true"><svg viewBox="0 0 32 32">${logo.svg}</svg></span>`
   return `<div class="avatar ${size}" style="--h:${hue(c.slug)}" aria-hidden="true">${esc(c.org.trim()[0] ?? "?")}</div>`
 }
 
@@ -237,7 +260,7 @@ const heroVisual = `
   <div class="hero-visual" aria-hidden="true">
     <div class="hv-card">
       <div class="hv-head">
-        <span class="hv-name"><span class="avatar avatar-sm" style="--h:28">F</span> Fennec VPN</span>
+        <span class="hv-name"><span class="avatar logo avatar-sm" style="background:#e2702b"><svg viewBox="0 0 32 32">${LOGOS["fennec-vpn"].svg}</svg></span> Fennec VPN</span>
         <span class="chip chip-alive"><i class="dot"></i>Alive</span>
       </div>
       <svg class="ecg" viewBox="0 0 560 120" preserveAspectRatio="none">
