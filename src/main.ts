@@ -268,7 +268,9 @@ function boardBody() {
         ? `<div class="grid">${'<div class="card skeleton"></div>'.repeat(3)}</div>`
         : state.canaries.length
           ? `<div class="grid">${state.canaries.map(card).join("")}</div>`
-          : `<div class="empty">${icon("layers")}<h3>No canaries${history ? " at this block" : " yet"}</h3><p>Be the first company to publish one.</p><a class="btn btn-primary btn-sm" href="#/publish">Publish a canary</a></div>`
+          : state.error
+            ? `<div class="empty">${icon("alert")}<h3>Couldn't read the board right now</h3><p>Every canary is still on Arkiv. Try again shortly.</p></div>`
+            : `<div class="empty">${icon("layers")}<h3>No canaries${history ? " at this block" : " yet"}</h3><p>Be the first company to publish one.</p><a class="btn btn-primary btn-sm" href="#/publish">Publish a canary</a></div>`
     }
 `
 }

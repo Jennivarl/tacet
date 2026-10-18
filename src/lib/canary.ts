@@ -30,8 +30,12 @@ export const EXPLORER = "https://tiramisu.explorer.arkiv.network"
 
 // Anonymous RPC use has an hourly query budget. When it runs out the node answers 429 with a
 // Retry-After of up to an hour, which viem would otherwise wait out silently. Fail fast instead.
-// Scripts can pass an Arkiv access key (hub.arkiv.network) through ARKIV_API_KEY.
-const apiKey = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.ARKIV_API_KEY
+// Scripts can pass an Arkiv access key (hub.arkiv.network) through ARKIV_API_KEY. The local dev
+// server can use VITE_ARKIV_API_KEY from .env.development.local, which `vite build` never reads,
+// so a key never ships in the public site.
+const apiKey =
+  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.ARKIV_API_KEY ??
+  (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_ARKIV_API_KEY
 
 export function makePublicClient(
   transport: Transport = http(undefined, {
