@@ -2,7 +2,7 @@
 
 **Warrant canaries that die on their own.** Built on [Arkiv](https://arkiv.network), the Web3 database.
 
-**Live app:** https://tacet-zeta.vercel.app · Tracks: **Censorship Resistance**, **Security**
+**Live app:** https://usetacet.vercel.app · Tracks: **Censorship Resistance**, **Security**
 
 ## The problem
 
