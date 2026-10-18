@@ -70,6 +70,8 @@ const PATHS: Record<string, string> = {
   zap: '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>',
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  pulse: '<path d="M3 12h4l2.5-6 4 12 2.5-6H21"/>',
+  muted: '<path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6M21 9l-5 6"/>',
   external: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
 }
 const icon = (name: string, cls = "") =>
@@ -222,6 +224,8 @@ function tags(c: Canary) {
   return out.join("")
 }
 
+const STATUS_ICON = { alive: "pulse", due: "clock", dead: "muted" } as const
+
 function row(c: Canary) {
   const pct = c.status === "dead" ? 100 : Math.max(0, Math.min(100, (c.secondsLeft / c.periodSec) * 100))
   const left =
@@ -239,7 +243,7 @@ function row(c: Canary) {
       <div class="strip" style="--p:${pct}%" ${c.status === "dead" ? "" : `data-bar="${c.secondsLeft}" data-period="${c.periodSec}"`}></div>
       ${left}
     </div>
-    <span class="r-status"><i class="dot dot-${c.status}"></i>${STATUS[c.status].label}</span>
+    <span class="r-status"><span class="st st-${c.status}">${icon(STATUS_ICON[c.status])}${STATUS[c.status].label}</span></span>
   </a>`
 }
 
@@ -296,7 +300,7 @@ function boardStats() {
 function boardStatus() {
   return state.atBlock !== undefined
     ? `${icon("history")}<span>Viewing history at block <b class="mono">${state.atBlock}</b>, read with an <code>atBlock</code> query.</span>`
-    : `<i class="live-dot ${state.live ? "on" : ""}"></i><span>${state.live ? "Live over WebSocket" : "Polling"} · read straight from the public Tiramisu RPC</span>`
+    : `${state.live ? `<span class="st st-alive st-sm">${icon("pulse")}Live</span><span>over WebSocket` : `<span class="st st-neutral st-sm">${icon("clock")}Polling</span><span>every minute`} · read straight from the public Tiramisu RPC</span>`
 }
 
 function boardBody() {
