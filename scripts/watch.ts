@@ -1,6 +1,7 @@
 // Tacet CLI watcher. Talks straight to the public Tiramisu RPC, no Tacet server.
 //   npm run watch                 -> every canary
 //   npm run watch -- 0xPROMISEKEY -> one canary
+import "dotenv/config"
 import { fmtDuration, isRateLimited, loadCanaries, makePublicClient, makeSocketClient, short, type Status } from "../src/lib/canary"
 
 const only = process.argv[2]?.toLowerCase()
