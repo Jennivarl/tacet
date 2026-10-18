@@ -145,7 +145,9 @@ setInterval(() => {
   }
   for (const el of document.querySelectorAll<HTMLElement>("[data-bar]")) {
     const left = Number(el.dataset.bar) - elapsed
-    el.style.width = `${Math.max(0, Math.min(100, (left / Number(el.dataset.period)) * 100))}%`
+    const pct = `${Math.max(0, Math.min(100, (left / Number(el.dataset.period)) * 100))}%`
+    if (el.classList.contains("strip")) el.style.setProperty("--p", pct)
+    else el.style.width = pct
   }
   if (expired && Date.now() - state.loadedAt > 15_000) scheduleRefresh(3000)
 }, 1000)
@@ -221,32 +223,31 @@ function tags(c: Canary) {
 }
 
 function row(c: Canary) {
-  const pct = c.status === "dead" ? 0 : Math.max(0, Math.min(100, (c.secondsLeft / c.periodSec) * 100))
-  const timer =
+  const pct = c.status === "dead" ? 100 : Math.max(0, Math.min(100, (c.secondsLeft / c.periodSec) * 100))
+  const left =
     c.status === "dead"
-      ? `<span class="r-time r-dead">No renewal</span><span class="r-bar"><span class="r-fill r-fill-dead" style="width:100%"></span></span>`
-      : `<span class="r-time mono" data-left="${c.secondsLeft}">${fmtDuration(c.secondsLeft)}</span><span class="r-bar"><span class="r-fill r-fill-${c.status}" style="width:${pct}%" data-bar="${c.secondsLeft}" data-period="${c.periodSec}"></span></span>`
+      ? `<span class="r-left r-left-dead">Silent. No renewal</span>`
+      : `<span class="r-left"><b class="mono" data-left="${c.secondsLeft}">${fmtDuration(c.secondsLeft)}</b> until renewal is due</span>`
   return `
   <a class="r r-${c.status}" href="#/c/${c.promiseKey}">
-    <span class="r-org">
+    <div class="r-top">
       ${avatar(c, "avatar-sm")}
-      <span class="r-id"><b>${esc(c.org)}</b><span class="r-sub">${esc(catLabel(c.category))}${tags(c) ? `<span class="r-tags">${tags(c)}</span>` : ""}</span></span>
-    </span>
-    <span class="r-status"><i class="dot dot-${c.status}"></i>${STATUS[c.status].label}</span>
-    <span class="r-renew">${timer}</span>
-    <span class="r-period">${fmtPeriod(c.periodSec)}</span>
-    <span class="r-signer mono">${short(c.creator)}</span>
-    <span class="r-go">${icon("arrow")}</span>
+      <div class="r-id">
+        <div class="r-name"><b>${esc(c.org)}</b>${tags(c)}</div>
+        <span class="r-sub">${esc(catLabel(c.category))} · renews every ${fmtPeriod(c.periodSec)}</span>
+      </div>
+      <span class="r-status"><i class="dot dot-${c.status}"></i>${STATUS[c.status].label}</span>
+    </div>
+    <div class="strip" style="--p:${pct}%" ${c.status === "dead" ? "" : `data-bar="${c.secondsLeft}" data-period="${c.periodSec}"`}></div>
+    <div class="r-foot">
+      <span>Signed by <span class="mono">${short(c.creator)}</span></span>
+      ${left}
+    </div>
   </a>`
 }
 
 function boardList(list: Canary[]) {
-  return `<div class="list">
-    <div class="r r-head" aria-hidden="true">
-      <span>Organization</span><span>Status</span><span>Next renewal</span><span>Renews every</span><span>Signed by</span><span></span>
-    </div>
-    ${list.map(row).join("")}
-  </div>`
+  return `<div class="list">${list.map(row).join("")}</div>`
 }
 
 function codeBlock(label: string, code: string) {
@@ -307,7 +308,7 @@ function boardBody() {
     ${state.error ? `<p class="notice notice-error">${esc(state.error)}</p>` : ""}
     ${
       state.loading
-        ? `<div class="list">${'<div class="r r-skel"></div>'.repeat(4)}</div>`
+        ? `<div class="list">${'<div class="r-skel"></div>'.repeat(4)}</div>`
         : state.canaries.length
           ? boardList(state.canaries)
           : state.error
