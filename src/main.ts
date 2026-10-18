@@ -226,23 +226,20 @@ function row(c: Canary) {
   const pct = c.status === "dead" ? 100 : Math.max(0, Math.min(100, (c.secondsLeft / c.periodSec) * 100))
   const left =
     c.status === "dead"
-      ? `<span class="r-left r-left-dead">Silent. No renewal</span>`
-      : `<span class="r-left"><b class="mono" data-left="${c.secondsLeft}">${fmtDuration(c.secondsLeft)}</b> until renewal is due</span>`
+      ? `<span class="r-left r-left-dead">No renewal</span>`
+      : `<span class="r-left mono" data-left="${c.secondsLeft}">${fmtDuration(c.secondsLeft)}</span>`
   return `
   <a class="r r-${c.status}" href="#/c/${c.promiseKey}">
-    <div class="r-top">
-      ${avatar(c, "avatar-sm")}
-      <div class="r-id">
-        <div class="r-name"><b>${esc(c.org)}</b>${tags(c)}</div>
-        <span class="r-sub">${esc(catLabel(c.category))} · renews every ${fmtPeriod(c.periodSec)}</span>
-      </div>
-      <span class="r-status"><i class="dot dot-${c.status}"></i>${STATUS[c.status].label}</span>
+    ${avatar(c, "avatar-sm")}
+    <div class="r-id">
+      <div class="r-name"><b>${esc(c.org)}</b>${tags(c)}</div>
+      <span class="r-sub">${esc(catLabel(c.category))} · every ${fmtPeriod(c.periodSec)} · <span class="mono">${short(c.creator)}</span></span>
     </div>
-    <div class="strip" style="--p:${pct}%" ${c.status === "dead" ? "" : `data-bar="${c.secondsLeft}" data-period="${c.periodSec}"`}></div>
-    <div class="r-foot">
-      <span>Signed by <span class="mono">${short(c.creator)}</span></span>
+    <div class="r-meter">
+      <div class="strip" style="--p:${pct}%" ${c.status === "dead" ? "" : `data-bar="${c.secondsLeft}" data-period="${c.periodSec}"`}></div>
       ${left}
     </div>
+    <span class="r-status"><i class="dot dot-${c.status}"></i>${STATUS[c.status].label}</span>
   </a>`
 }
 

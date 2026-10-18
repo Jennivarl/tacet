@@ -419,49 +419,49 @@ input:focus, select:focus, textarea:focus { outline: 0; border-color: var(--ink)
 
 /* ---------- board list (status-page style) ---------- */
 .list { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
-.r { display: flex; flex-direction: column; gap: 12px; padding: 20px 24px; border-top: 1px solid var(--line); transition: background 0.15s ease; }
+.r { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto 112px; align-items: center; gap: 16px; padding: 16px 22px; border-top: 1px solid var(--line); transition: background 0.15s ease; }
 .r:first-child { border-top: 0; }
 .r:hover { background: color-mix(in srgb, var(--surface-2) 45%, var(--surface)); }
-.r-top { display: flex; align-items: center; gap: 14px; }
 .r .avatar-sm { width: 38px; height: 38px; border-radius: 10px; }
-.r-id { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.r-id { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .r-name { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.r-name b { font-size: 15.5px; font-weight: 600; letter-spacing: -0.015em; }
-.r-sub { font-size: 13px; color: var(--muted); }
-.r-status { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+.r-name b { font-size: 15px; font-weight: 600; letter-spacing: -0.015em; }
+.r-sub { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.r-sub .mono { font-size: 11.5px; }
+.r-meter { display: flex; align-items: center; gap: 12px; }
+.r-left { font-size: 12.5px; color: var(--ink-2); min-width: 64px; text-align: right; }
+.r-left-dead { color: var(--muted); font-weight: 500; }
+.r-status { display: inline-flex; align-items: center; justify-content: flex-end; gap: 7px; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .r-alive .r-status { color: var(--alive); }
 .r-due .r-status { color: var(--due); }
 .r-dead .r-status { color: var(--dead); }
-.r-status .dot { width: 8px; height: 8px; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent); }
 
-.tag-o { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px 0 7px; border-radius: 999px; font-size: 11.5px; font-weight: 500; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); white-space: nowrap; }
-.tag-o .ic { width: 12px; height: 12px; }
-.tag-bad { color: var(--dead); background: var(--dead-soft); border-color: transparent; font-weight: 600; }
+.tag-o { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 7px 0 6px; border-radius: 999px; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--surface-2); white-space: nowrap; }
+.tag-o .ic { width: 11px; height: 11px; }
+.tag-bad { color: var(--dead); background: var(--dead-soft); font-weight: 600; }
 .tag-warn .ic { color: var(--due); }
 .tag-ok .ic { color: var(--alive); }
 
-/* The strip: remaining life as a row of bars, the classic status-page visual. */
+/* Compact life meter: a short row of bars that drains as renewal time runs out. */
 .strip {
-  --on: color-mix(in srgb, var(--alive) 82%, var(--surface));
-  height: 28px;
-  border-radius: 4px;
+  --on: color-mix(in srgb, var(--alive) 78%, var(--surface));
+  width: 120px; height: 18px;
   background: linear-gradient(90deg, var(--on) 0 var(--p), color-mix(in srgb, var(--ink) 9%, transparent) var(--p) 100%);
-  -webkit-mask: repeating-linear-gradient(90deg, #000 0 4px, transparent 4px 7px);
-  mask: repeating-linear-gradient(90deg, #000 0 4px, transparent 4px 7px);
-  transition: background 1s linear;
+  -webkit-mask: repeating-linear-gradient(90deg, #000 0 3px, transparent 3px 5px);
+  mask: repeating-linear-gradient(90deg, #000 0 3px, transparent 3px 5px);
 }
-.r-due .strip { --on: color-mix(in srgb, var(--due) 85%, var(--surface)); }
-.r-dead .strip { --on: color-mix(in srgb, var(--dead) 62%, var(--surface)); }
-.r-foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
-.r-foot .mono { font-size: 12px; }
-.r-left b { color: var(--ink); font-weight: 500; font-size: 12.5px; }
-.r-left-dead { color: var(--dead); font-weight: 600; }
-.r-skel { height: 132px; border-top: 1px solid var(--line); background: linear-gradient(100deg, var(--surface) 30%, var(--surface-2) 50%, var(--surface) 70%) 0 0 / 300% 100%; animation: shimmer 1.4s linear infinite; }
+.r-due .strip { --on: color-mix(in srgb, var(--due) 82%, var(--surface)); }
+.r-dead .strip { --on: color-mix(in srgb, var(--dead) 45%, var(--surface)); }
+.r-skel { height: 71px; border-top: 1px solid var(--line); background: linear-gradient(100deg, var(--surface) 30%, var(--surface-2) 50%, var(--surface) 70%) 0 0 / 300% 100%; animation: shimmer 1.4s linear infinite; }
 .r-skel:first-child { border-top: 0; }
-@media (max-width: 720px) {
-  .r { padding: 16px; gap: 10px; }
-  .strip { height: 24px; }
-  .r-sub { font-size: 12.5px; }
+@media (max-width: 760px) {
+  .r { grid-template-columns: 36px minmax(0, 1fr) auto; grid-template-areas: "logo id status" "logo id meter"; gap: 4px 12px; padding: 14px 16px; }
+  .r .avatar-sm { grid-area: logo; }
+  .r-id { grid-area: id; }
+  .r-status { grid-area: status; }
+  .r-meter { grid-area: meter; justify-self: end; gap: 8px; }
+  .strip { width: 56px; height: 12px; }
+  .r-left { min-width: 0; font-size: 12px; }
 }
 .avatar.logo { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(60, 45, 20, 0.12); }
 .avatar.logo svg { width: 78%; height: 78%; display: block; }
