@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      html, body { background: #f5efe3; margin: 0; }
+      :root[data-theme="dark"], :root[data-theme="dark"] body { background: #0b0b0d; }
+    </style>
     <script>
       try {
         const t = localStorage.getItem("tacet-theme")
@@ -21,10 +25,10 @@
     <header class="nav">
       <div class="nav-inner">
         <a class="brand" href="#/" aria-label="Tacet home">
-          <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
-            <rect width="32" height="32" rx="9" class="logo-bg" />
-            <path d="M8 11h16" class="logo-line" stroke-width="2" stroke-linecap="round" />
-            <rect x="11" y="11" width="10" height="6" rx="1.2" class="logo-rest" />
+          <svg class="logo-mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="9" class="logo-bg" fill="#17140f" />
+            <path d="M8 11h16" class="logo-line" stroke="#f5efe3" stroke-width="2" stroke-linecap="round" />
+            <rect x="11" y="11" width="10" height="6" rx="1.2" class="logo-rest" fill="#f2b705" />
           </svg>
           <span>tacet</span>
         </a>
