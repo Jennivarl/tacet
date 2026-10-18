@@ -157,7 +157,7 @@ setInterval(() => {
 // ---------- components ----------
 
 function chip(c: Canary) {
-  return `<span class="chip chip-${c.status}"><i class="dot"></i>${STATUS[c.status].label}</span>`
+  return `<span class="st st-${c.status}">${icon(STATUS_ICON[c.status])}${STATUS[c.status].label}</span>`
 }
 
 // Logo marks for the fictional demo organizations. Anything else gets a lettered tile.
@@ -263,7 +263,7 @@ const heroVisual = `
     <div class="hv-card">
       <div class="hv-head">
         <span class="hv-name"><span class="avatar logo avatar-sm" style="background:#e2702b"><svg viewBox="0 0 32 32">${LOGOS["fennec-vpn"].svg}</svg></span> Fennec VPN</span>
-        <span class="chip chip-alive"><i class="dot"></i>Alive</span>
+        <span class="st st-alive">${icon("pulse")}Alive</span>
       </div>
       <svg class="ecg" viewBox="0 0 560 120" preserveAspectRatio="none">
         <path class="ecg-alive" pathLength="100" d="M0 64h30l7-9 7 9h16l8-46 11 84 8-38h40l7-9 7 9h16l8-46 11 84 8-38h40l7-9 7 9h16l8-46 11 84 8-38h24"/>
@@ -289,10 +289,10 @@ function boardStats() {
   for (const c of state.canaries) counts[c.status]++
   return `
   <section class="stats" aria-label="Summary">
-    <div class="stat"><span class="stat-label"><i class="dot dot-alive"></i>Alive</span><b class="stat-num">${counts.alive}</b></div>
-    <div class="stat"><span class="stat-label"><i class="dot dot-due"></i>Due soon</span><b class="stat-num">${counts.due}</b></div>
-    <div class="stat"><span class="stat-label"><i class="dot dot-dead"></i>Gone quiet</span><b class="stat-num">${counts.dead}</b></div>
-    <div class="stat"><span class="stat-label">${history ? "Viewing block" : "Latest block"}</span><b class="stat-num mono">${state.block ? Number(history ? state.atBlock : state.block).toLocaleString("en-US") : "–"}</b></div>
+    <div class="stat"><span class="stat-label"><span class="stat-ic st-alive">${icon("pulse")}</span>Alive</span><b class="stat-num">${counts.alive}</b></div>
+    <div class="stat"><span class="stat-label"><span class="stat-ic st-due">${icon("clock")}</span>Due soon</span><b class="stat-num">${counts.due}</b></div>
+    <div class="stat"><span class="stat-label"><span class="stat-ic st-dead">${icon("muted")}</span>Gone quiet</span><b class="stat-num">${counts.dead}</b></div>
+    <div class="stat"><span class="stat-label"><span class="stat-ic st-neutral">${icon("layers")}</span>${history ? "Viewing block" : "Latest block"}</span><b class="stat-num mono">${state.block ? Number(history ? state.atBlock : state.block).toLocaleString("en-US") : "–"}</b></div>
   </section>
 `
 }
@@ -324,7 +324,7 @@ function viewBoard() {
   return `
   <section class="hero">
     <div class="hero-copy">
-      <span class="eyebrow"><i class="live-dot on"></i>Built on Arkiv · Tiramisu testnet</span>
+      <span class="eyebrow">${icon("pulse")}Built on Arkiv · Tiramisu testnet</span>
       <h1>When a company goes quiet, <em>you'll know.</em></h1>
       <p class="lead">Tacet puts warrant canaries on Arkiv, the Web3 database. A company renews its canary from its own wallet.
       If it is gagged and stops, the canary expires by itself, and everyone can see it.</p>
@@ -449,7 +449,7 @@ function viewPublish() {
         <div class="step-head"><span class="step-n">1</span><h2>Connect your wallet</h2></div>
         ${
           account
-            ? `<div class="connected">${icon("wallet")}<span>Connected as ${addrLink(account)}</span><span class="chip chip-alive"><i class="dot"></i>Tiramisu</span></div>`
+            ? `<div class="connected">${icon("wallet")}<span>Connected as ${addrLink(account)}</span><span class="st st-alive st-sm">${icon("check")}Tiramisu</span></div>`
             : `<button id="connect" class="btn btn-dark" type="button">${icon("wallet")} Connect wallet</button>
                <p class="hint">MetaMask or Rabby. We add the Tiramisu network for you. Need test GLM? Use the ${ext("https://hub.arkiv.network/faucet", "Arkiv faucet", "link")}.</p>`
         }
